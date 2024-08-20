@@ -1,4 +1,0 @@
-NAME="Foobar"
-DESCRIPTION="Foobar is an amazing strategy game based on fizzbuzz"
-SOURCE="https://github.com/thoth-tech/foobar.git"
-IMAGE="foobar.png"

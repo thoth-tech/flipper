@@ -1,1 +1,0 @@
-arm-linux-gnueabihf-g++ foobar.cpp -l Splashkit -o foobar

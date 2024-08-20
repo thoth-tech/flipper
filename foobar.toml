@@ -1,0 +1,8 @@
+[meta]
+name = "FooBar"
+description = "Foobar is an amazing strategy game based on fizzbuzz"
+license = "LICENSE.txt"
+language = "C++"
+
+[source]
+git = "https://github.com/thoth-tech/foobar.git"
