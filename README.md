@@ -49,10 +49,7 @@ language = ""
 
 [git]
 repo = ""
-# Only specify either a tag or a branch. If neither is specified then the
-# default branch is used
-tag = ""
-branch = ""
+branch = ""  # a tag can also be specified
 
 [build]
 source_files = []

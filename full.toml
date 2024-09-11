@@ -6,7 +6,6 @@ license = ""
 
 [git]
 repo = ""
-tag = ""
 branch = ""
 
 [build]
