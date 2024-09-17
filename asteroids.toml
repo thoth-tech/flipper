@@ -1,0 +1,7 @@
+[meta]
+name = "Asteroids"
+description = "The classic top down shooter"
+language = "cs"
+
+[git]
+repo = "https://github.com/thoth-tech/Asteroids.git"

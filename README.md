@@ -50,6 +50,7 @@ language = ""
 [git]
 repo = ""
 branch = ""  # a tag can also be specified
+directory = ""
 
 [build]
 source_files = []
