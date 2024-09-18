@@ -16,7 +16,7 @@ HOME_PATH = "~"
 GAMES_PATH = "Games"  # relative to HOME_PATH
 SYSTEM_PATH = os.path.join(GAMES_PATH, "LaunchScripts")
 
-CPP_LINK_SPLASHKIT = "-lSplashkit"
+CPP_LINK_SPLASHKIT = "-lSplashKit"
 
 # The verbose flag sets this to None so that stdout will be shown on stdout
 STDOUT = subprocess.DEVNULL
