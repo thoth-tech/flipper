@@ -1,7 +1,16 @@
 [meta]
 name = "Asteroids"
-description = "The classic top down shooter"
 language = "cs"
+description = """
+Asteroids is a top-down single player or co-op shooter that has \
+you, the player, flying around and surviving an onslaught of rocks, and if you \
+survive long enough, even bosses!"""
 
 [git]
 repo = "https://github.com/thoth-tech/Asteroids.git"
+
+[emulationstation]
+image = "doco/images/img3.png"
+genre = "Multidirectional shooter"
+developer = "Thoth Tech"
+rating = 4.5
