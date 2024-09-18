@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import logging
 import argparse
 import os
 import subprocess
@@ -9,7 +10,7 @@ import xml.etree.ElementTree as xml
 
 from datetime import datetime
 
-ARCHIVE_NAME = f"splashkit-games-{datetime.now():%Y%m%d-%H%M%S}.tar.gz"
+ARCHIVE_PATH = f"../splashkit-games-{datetime.now():%Y%m%d-%H%M%S}.tar.gz"
 
 HOME_PATH = "~"
 GAMES_PATH = "Games"  # relative to HOME_PATH
@@ -18,7 +19,14 @@ SYSTEM_PATH = os.path.join(GAMES_PATH, "LaunchScripts")
 CPP_FILES = "*.cpp"
 CPP_LINK_SPLASHKIT = "-lSplashkit"
 
+# The verbose flag sets this to None so that stdout will be shown on stdout
+STDOUT = subprocess.DEVNULL
+
+# The verbose flag sets this to logging.DEBUG
+LOG_LEVEL = logging.INFO
+
 args = None
+log = logging.getLogger("flipper")
 
 
 class Game:
@@ -29,6 +37,7 @@ class Game:
         self.git = config["git"]
         self.es = config.get("emulationstation", {})
 
+        self.log = logging.getLogger(self.meta["name"])
         self.cloned = False
 
     def clone(self):
@@ -41,10 +50,10 @@ class Game:
 
         cmd += [self.git["repo"], os.path.join(GAMES_PATH, self.meta["name"])]
 
-        print(f"Cloning {self.meta['name']}...")
-        print(" ".join(cmd))
+        self.log.info(f"Cloning {self.meta['name']}...")
+        self.log.debug(" ".join(cmd))
 
-        subprocess.run(cmd)
+        subprocess.run(cmd, stdout=STDOUT)
         self.cloned = True
 
     def build(self):
@@ -77,19 +86,23 @@ class Game:
             cmd.append(CPP_LINK_SPLASHKIT)
             cmd += ["-o", "bin/" + self.meta["name"]]
         else:
-            print(f"{self.meta['name']}: Unknown language {self.meta['language']}")
+            self.log.critical(f"Unable to build, unknown language {self.meta['language']}")
+            exit(1)
 
-        print(f"Building {self.meta['name']}...")
-        print(" ".join(cmd))
+        self.log.info(f"Building {self.meta['name']}...")
+        self.log.debug(" ".join(cmd))
 
         old_path = os.getcwd()
         os.chdir(build_path)
 
-        subprocess.run(cmd)
+        subprocess.run(cmd, stdout=STDOUT)
 
         os.chdir(old_path)
 
     def generate_run_script(self):
+        script_path = os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh")
+        self.log.info(f"Creating run script for {self.meta['name']} at {script_path}")
+
         """Generate a run script for the game"""
         script = ""
 
@@ -99,11 +112,15 @@ class Game:
             {os.path.join(HOME_PATH, GAMES_PATH, self.meta['name'], 'bin', self.meta['name'])}
             """
         else:
-            print(f"{self.meta['name']}: Unknown language {self.meta['language']}")
+            self.log.error(f"Unable to create run script, unknown language {self.meta['language']}")
 
         os.makedirs(SYSTEM_PATH, exist_ok=True)
-        with open(os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh"), "w+") as fp:
-            fp.write(textwrap.dedent(script))
+
+        script = textwrap.dedent(script)
+        self.log.debug(script)
+
+        with open(script_path, "w+") as fp:
+            fp.write(script)
             os.chmod(fp.name, 0o755)
 
     def es_config(self, gamelist):
@@ -123,21 +140,30 @@ class Game:
         name = xml.SubElement(game, "name")
         name.text = self.meta["name"]
 
+        self.log.info(f"Generating gamelist configuration for {self.meta['name']}")
+
         if (description := self.meta.get("description")) is not None:
+            self.log.debug("Adding description tag")
             desc = xml.SubElement(game, "desc")
             desc.text = description
+        else:
+            self.log.warning(f"{self.meta['name']} doesn't have a description")
 
         for tag, val in self.es.items():
+            self.log.debug(f"Adding {tag} tag")
             element = xml.SubElement(game, tag)
             element.text = str(val)
 
 
 def create_archive():
-    cmd = ["tar", "czvf", f"../{ARCHIVE_NAME}", "."]
-    subprocess.run(cmd)
+    log.info(f"Creating {ARCHIVE_PATH}")
+    cmd = ["tar", "czvf", ARCHIVE_PATH, "."]
+    log.debug(" ".join(cmd))
+    subprocess.run(cmd, stdout=STDOUT)
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description="splashkit arcade package manager")
 
     parser.add_argument(
@@ -146,8 +172,17 @@ if __name__ == "__main__":
     parser.add_argument("--cpp-prefix", help="cpp compiler prefix", default="")
     parser.add_argument("--cpp", help="cpp compiler", default="cpp")
     parser.add_argument("--path", help="path to the games repo", default=os.curdir)
+    parser.add_argument(
+        "--verbose", help="increase output verbosity", action="store_true"
+    )
 
     args = parser.parse_args()
+
+    if args.verbose:
+        LOG_LEVEL = logging.DEBUG
+        STDOUT = None
+
+    logging.basicConfig(level=LOG_LEVEL)
 
     games = []
 
