@@ -13,9 +13,10 @@ jobs:
           python-version: 3.12
 
       - name: Install splashkit
-        run: curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
-        run: skm linux install
-        run: skm global install
+        run: |
+          curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
+          skm linux install
+          skm global install
 
       - name: Checkout splashkit
         uses: actions/checkout@v4
@@ -34,6 +35,7 @@ jobs:
         run: sudo apt -y install dotnet-host
 
       - name: Run flipper
-        run: mkdir -p build
-        run: cd build
-        run: python flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' }}
+        run: |
+          mkdir -p build
+          cd build
+          python flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' }}
