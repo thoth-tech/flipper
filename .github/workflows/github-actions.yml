@@ -7,15 +7,9 @@ jobs:
       matrix:
         arch: ["rpi", "linux"]
     steps:
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
-
       - name: Install splashkit dependencies
         run: | 
-          sudo apt-get install -y \
-            cmake \ 
+          sudo apt-get install -y cmake \ 
             libbz2-dev \
             libcurl4-openssl-dev \
             libflac-dev \
@@ -53,6 +47,11 @@ jobs:
 
       - name: Install dotnet
         run: sudo apt-get install -y dotnet-host
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
 
       - name: Run flipper
         run: |
