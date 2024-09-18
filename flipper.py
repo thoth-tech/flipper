@@ -16,7 +16,6 @@ HOME_PATH = "~"
 GAMES_PATH = "Games"  # relative to HOME_PATH
 SYSTEM_PATH = os.path.join(GAMES_PATH, "LaunchScripts")
 
-CPP_FILES = "*.cpp"
 CPP_LINK_SPLASHKIT = "-lSplashkit"
 
 # The verbose flag sets this to None so that stdout will be shown on stdout
@@ -81,23 +80,22 @@ class Game:
             cmd += ["-o", "bin"]
 
         elif self.meta["language"] == "cpp":
-            cmd.append(args.cpp - prefix + args.cpp)
-            cmd.append(CPP_FILES)
+            cmd.append(args.cpp_prefix + args.cpp)
+            cmd += [
+                source for source in os.listdir(build_path) if source.endswith(".cpp")
+            ]
             cmd.append(CPP_LINK_SPLASHKIT)
             cmd += ["-o", "bin/" + self.meta["name"]]
         else:
-            self.log.critical(f"Unable to build, unknown language {self.meta['language']}")
+            self.log.critical(
+                f"Unable to build, unknown language {self.meta['language']}"
+            )
             exit(1)
 
         self.log.info(f"Building {self.meta['name']}...")
         self.log.debug(" ".join(cmd))
 
-        old_path = os.getcwd()
-        os.chdir(build_path)
-
-        subprocess.run(cmd, stdout=STDOUT)
-
-        os.chdir(old_path)
+        subprocess.run(cmd, cwd=build_path, stdout=STDOUT)
 
     def generate_run_script(self):
         script_path = os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh")
@@ -109,10 +107,12 @@ class Game:
         if self.meta["language"] == "cs" or self.meta["language"] == "cpp":
             script = f"""\
             #!/bin/sh
-            {os.path.join(HOME_PATH, GAMES_PATH, self.meta['name'], 'bin', self.meta['name'])}
+            {os.path.join(HOME_PATH, GAMES_PATH, self.meta['name'], self.git.get('directory', ''), 'bin', self.meta['name'])}
             """
         else:
-            self.log.error(f"Unable to create run script, unknown language {self.meta['language']}")
+            self.log.error(
+                f"Unable to create run script, unknown language {self.meta['language']}"
+            )
 
         os.makedirs(SYSTEM_PATH, exist_ok=True)
 
@@ -163,14 +163,13 @@ def create_archive():
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="splashkit arcade package manager")
 
     parser.add_argument(
         "--cs-runtime", help="dotnet runtime architecture", default="linux-x64"
     )
     parser.add_argument("--cpp-prefix", help="cpp compiler prefix", default="")
-    parser.add_argument("--cpp", help="cpp compiler", default="cpp")
+    parser.add_argument("--cpp", help="cpp compiler", default="g++")
     parser.add_argument("--path", help="path to the games repo", default=os.curdir)
     parser.add_argument(
         "--verbose", help="increase output verbosity", action="store_true"

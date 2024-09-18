@@ -52,10 +52,6 @@ repo = ""
 branch = ""  # a tag can also be specified
 directory = ""
 
-[build]
-source_files = []
-include_paths = []
-
 # See https://github.com/thoth-tech/ArcadeMenu/blob/master/GAMELISTS.md
 [emulationstation]
 image = ""
