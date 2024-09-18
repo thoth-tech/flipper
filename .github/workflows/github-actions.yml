@@ -16,11 +16,6 @@ jobs:
           ~/.splashkit/skm linux install
           ~/.splashkit/skm global install
 
-      - name: Clone flipper repo
-        uses: actions/checkout@v4
-        with:
-          path: flipper
-
       - name: Install g++ arm
         run: sudo apt-get install -y gcc-arm-linux-gnueabihf
 
@@ -32,8 +27,11 @@ jobs:
         with:
           python-version: 3.12
 
+      - name: Clone flipper repo
+        uses: actions/checkout@v4
+
       - name: Run flipper
         run: |
           mkdir -p build
           cd build
-          python ../flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' || '' }}
+          python ../flipper.py --path .. ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' || '' }}
