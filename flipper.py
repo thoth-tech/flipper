@@ -118,7 +118,7 @@ class Game:
     def generate_run_script(self):
         """Generate a run script for the game"""
         script_path = os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh")
-        self.log.info(f"Creating run script for {self.meta['name']} at {script_path}")
+        self.log.info(f"Creating run script at {script_path}")
 
         script = ""
 
