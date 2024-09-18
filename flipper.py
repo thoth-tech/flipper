@@ -78,7 +78,6 @@ class Game:
             cmd += ["--configuration", "release"]
             cmd += ["--runtime", args.cs_runtime]
             cmd += ["-o", "bin"]
-
         elif self.meta["language"] == "cpp":
             cmd.append(args.cpp_prefix + args.cpp)
             cmd += [
@@ -147,9 +146,19 @@ class Game:
             desc = xml.SubElement(game, "desc")
             desc.text = description
         else:
-            self.log.warning(f"{self.meta['name']} doesn't have a description")
+            self.log.warning("Game doesn't have a description")
+
+        if (image := self.es.get("image")) is not None:
+            self.log.debug("Adding image tag")
+            desc = xml.SubElement(game, "image")
+            desc.text = os.path.join(self.git.get("directory", ""), image)
+        else:
+            self.log.warning("Game doesn't have title image")
 
         for tag, val in self.es.items():
+            if tag == "image":
+                continue
+
             self.log.debug(f"Adding {tag} tag")
             element = xml.SubElement(game, tag)
             element.text = str(val)

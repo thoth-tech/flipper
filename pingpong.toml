@@ -1,0 +1,13 @@
+[meta]
+name = "Pingpong"
+language = "cpp"
+description = "The classic ping pong game"
+
+[git]
+repo = "https://github.com/thoth-tech/arcade-games.git"
+directory = "games/Pingpong"
+
+[emulationstation]
+image = "images/Pingpong-config-image.png"
+genre = "Sports"
+developer = "Thoth Tech"
