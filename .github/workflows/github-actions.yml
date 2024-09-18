@@ -1,0 +1,39 @@
+on: [push]
+
+jobs:
+  build_matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: ["rpi", "linux"]
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install splashkit
+        run: curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
+        run: skm linux install
+        run: skm global install
+
+      - name: Checkout splashkit
+        uses: actions/checkout@v4
+        with:
+          path: splashkit
+
+      - name: Clone flipper repo
+        uses: actions/checkout@v4
+        with:
+          path: flipper
+
+      - name: Install g++ arm
+        run: sudo apt -y install gcc-arm-linux-gnueabihf
+
+      - name: Install dotnet
+        run: sudo apt -y install dotnet-host
+
+      - name: Run flipper
+        run: mkdir -p build
+        run: cd build
+        run: python flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' }}
