@@ -31,4 +31,4 @@ jobs:
       - name: Upload game archive
         uses: actions/upload-artifact@v4
         with:
-          path: ~/*.tar.gz
+          path: splashkit-games-*.tar.gz
