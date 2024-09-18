@@ -7,6 +7,9 @@ jobs:
       matrix:
         arch: ["rpi", "linux"]
     steps:
+      - name: Update apt repo
+        run: sudo apt update
+
       - name: Install splashkit
         run: |
           curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
