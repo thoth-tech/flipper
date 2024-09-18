@@ -36,4 +36,4 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          python ../flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' }}
+          python ../flipper/flipper.py --path flipper ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' || '' }}
