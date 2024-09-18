@@ -12,11 +12,31 @@ jobs:
         with:
           python-version: 3.12
 
+      - name: Install splashkit dependencies
+        run: | 
+          sudo apt-get install -y \
+            cmake \ 
+            libbz2-dev \
+            libcurl4-openssl-dev \
+            libflac-dev \
+            libfreetype6-dev \
+            libmikmod-dev \
+            libncurses-dev \
+            libpng-dev \
+            libsdl2-dev \
+            libsdl2-gfx-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-net-dev \
+            libsdl2-ttf-dev \
+            libvorbis-dev \
+            libwebp-dev
+
       - name: Install splashkit
         run: |
           curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
-          skm linux install
-          skm global install
+          ~/.splashkit/skm linux install
+          ~/.splashkit/skm global install
 
       - name: Checkout splashkit
         uses: actions/checkout@v4
@@ -29,10 +49,10 @@ jobs:
           path: flipper
 
       - name: Install g++ arm
-        run: sudo apt -y install gcc-arm-linux-gnueabihf
+        run: sudo apt-get install -y gcc-arm-linux-gnueabihf
 
       - name: Install dotnet
-        run: sudo apt -y install dotnet-host
+        run: sudo apt-get install -y dotnet-host
 
       - name: Run flipper
         run: |
