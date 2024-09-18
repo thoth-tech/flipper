@@ -41,18 +41,30 @@ class Game:
 
     def clone(self):
         """Clone the game's source code"""
+        clone_path = os.path.join(GAMES_PATH, self.meta["name"])
+
+        if os.path.isdir(clone_path):
+            self.log.warning("Game directory already exists, skipping cloning")
+            self.cloned = True
+            return
+
         cmd = ["git", "clone"]
         cmd.append("--depth=1")
 
         if "branch" in self.git.keys():
             cmd += ["--branch", self.git["branch"]]
 
-        cmd += [self.git["repo"], os.path.join(GAMES_PATH, self.meta["name"])]
+        cmd += [self.git["repo"], clone_path]
 
-        self.log.info(f"Cloning {self.meta['name']}...")
+        self.log.info(f"Cloning...")
         self.log.debug(" ".join(cmd))
 
-        subprocess.run(cmd, stdout=STDOUT)
+        clone = subprocess.run(cmd, stdout=STDOUT)
+
+        if clone.returncode != 0:
+            self.log.critical("Game failed to clone")
+            exit(clone.returncode)
+
         self.cloned = True
 
     def build(self):
@@ -76,7 +88,10 @@ class Game:
         if self.meta["language"] == "cs":
             cmd += ["dotnet", "publish"]
             cmd += ["--configuration", "release"]
-            cmd += ["--runtime", args.cs_runtime]
+
+            if args.cs_runtime is not None:
+                cmd += ["--runtime", args.cs_runtime]
+
             cmd += ["-o", "bin"]
         elif self.meta["language"] == "cpp":
             cmd.append(args.cpp_prefix + args.cpp)
@@ -94,7 +109,11 @@ class Game:
         self.log.info(f"Building {self.meta['name']}...")
         self.log.debug(" ".join(cmd))
 
-        subprocess.run(cmd, cwd=build_path, stdout=STDOUT)
+        build = subprocess.run(cmd, cwd=build_path, stdout=STDOUT)
+
+        if build.returncode != 0:
+            self.log.critical("Game failed to build")
+            exit(build.returncode)
 
     def generate_run_script(self):
         script_path = os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh")
@@ -168,14 +187,19 @@ def create_archive():
     log.info(f"Creating {ARCHIVE_PATH}")
     cmd = ["tar", "czvf", ARCHIVE_PATH, "."]
     log.debug(" ".join(cmd))
-    subprocess.run(cmd, stdout=STDOUT)
+
+    tar = subprocess.run(cmd, stdout=STDOUT)
+
+    if tar.returncode != 0:
+        log.critical("Archive creation failed, run with --verbose for more information")
+        exit(tar.returncode)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="splashkit arcade package manager")
 
     parser.add_argument(
-        "--cs-runtime", help="dotnet runtime architecture", default="linux-x64"
+        "--cs-runtime", help="dotnet runtime architecture", default=None
     )
     parser.add_argument("--cpp-prefix", help="cpp compiler prefix", default="")
     parser.add_argument("--cpp", help="cpp compiler", default="g++")
