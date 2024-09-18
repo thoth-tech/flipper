@@ -17,7 +17,7 @@ jobs:
           ~/.splashkit/skm global install
 
       - name: Install dependencies
-        run: sudo apt-get install -y dotnet-host gcc-arm-linux-gnueabihf
+        run: sudo apt-get install -y dotnet-host g++-arm-linux-gnueabihf
 
       - name: Setup Python
         uses: actions/setup-python@v5
