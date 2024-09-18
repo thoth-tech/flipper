@@ -116,10 +116,10 @@ class Game:
             exit(build.returncode)
 
     def generate_run_script(self):
+        """Generate a run script for the game"""
         script_path = os.path.join(SYSTEM_PATH, self.meta["name"] + ".sh")
         self.log.info(f"Creating run script for {self.meta['name']} at {script_path}")
 
-        """Generate a run script for the game"""
         script = ""
 
         if self.meta["language"] == "cs" or self.meta["language"] == "cpp":
