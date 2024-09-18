@@ -1,17 +1,12 @@
 on: [push]
 
 jobs:
-  build_matrix:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: ["rpi", "linux"]
     steps:
-      - name: Update apt repo
-        run: sudo apt update
-
       - name: Install splashkit
         run: |
+          sudo apt update
           curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
           ~/.splashkit/skm linux install
           ~/.splashkit/skm global install
@@ -31,7 +26,7 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          python ../flipper.py --path .. ${{ matrix.arch == 'rpi' && '--cs-runtime linux-arm --cpp-prefix arm-linux-gnueabihf-' || '' }}
+          python ../flipper.py --path ..
 
       - name: Upload game archive
         uses: actions/upload-artifact@v4
