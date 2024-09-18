@@ -9,22 +9,8 @@ jobs:
     steps:
       - name: Install splashkit dependencies
         run: | 
-          sudo apt-get install -y cmake \ 
-            libbz2-dev \
-            libcurl4-openssl-dev \
-            libflac-dev \
-            libfreetype6-dev \
-            libmikmod-dev \
-            libncurses-dev \
-            libpng-dev \
-            libsdl2-dev \
-            libsdl2-gfx-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-net-dev \
-            libsdl2-ttf-dev \
-            libvorbis-dev \
-            libwebp-dev
+          sudo apt-get update
+          sudo apt-get install -y cmake libbz2-dev libcurl4-openssl-dev libflac-dev libfreetype6-dev libmikmod-dev libncurses-dev libpng-dev libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev libvorbis-dev libwebp-dev
 
       - name: Install splashkit
         run: |
