@@ -1,0 +1,34 @@
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install splashkit
+        run: |
+          sudo apt update
+          curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
+          ~/.splashkit/skm linux install
+          ~/.splashkit/skm global install
+
+      - name: Install dependencies
+        run: sudo apt-get install -y dotnet-host g++-arm-linux-gnueabihf
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Clone flipper repo
+        uses: actions/checkout@v4
+
+      - name: Run flipper
+        run: |
+          mkdir -p build
+          cd build
+          python ../flipper.py --path ..
+
+      - name: Upload game archive
+        uses: actions/upload-artifact@v4
+        with:
+          path: splashkit-games-*.tar.gz

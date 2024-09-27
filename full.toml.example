@@ -1,0 +1,21 @@
+[meta]
+name = ""
+description = ""
+language = ""
+
+[git]
+repo = ""
+branch = ""
+directory = ""
+
+# See https://github.com/thoth-tech/ArcadeMenu/blob/master/GAMELISTS.md
+[emulationstation]
+image = ""
+thumbnail = ""
+rating = 0.0
+releasedate = 1979-05-27T07:32:00
+developer = ""
+publisher = ""
+genre = ""
+players = 0
+

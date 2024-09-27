@@ -1,0 +1,7 @@
+[meta]
+name = "FooBar"
+description = "Foobar is an amazing strategy game based on fizzbuzz"
+language = "cpp"
+
+[git]
+repo = "https://github.com/thoth-tech/foobar.git"
