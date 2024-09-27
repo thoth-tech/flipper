@@ -68,9 +68,24 @@ players = 0
 
 > Why toml?
 
-A toml parser included in python's standard library, where as a yaml parser
+A toml parser included in Python's standard library, where as a yaml parser
 isn't, and one of my requirements was that the build script should have no
 dependencies other then python and it's standard library.
+
+## Usage
+
+Flipper is designed to be ran in a clean 'build' directory (similar to cmake)
+and therefore takes the path to the repository as a positional argument. This
+would also allow one to seperate the games repository from the flipper source
+if flipper is being used on more repositories then just this one.
+
+A typical usage would look like the following
+
+```
+$ mkdir build
+$ cd build
+$ ../flipper.py ..
+```
 
 ## Licensing
 
