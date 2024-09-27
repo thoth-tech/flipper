@@ -202,11 +202,11 @@ if __name__ == "__main__":
         "--cs-runtime", help="dotnet runtime architecture", default=None
     )
     parser.add_argument("--cpp-prefix", help="cpp compiler prefix", default="")
-    parser.add_argument("--cpp", help="cpp compiler", default="g++")
-    parser.add_argument("--path", help="path to the games repo", default=os.curdir)
+    parser.add_argument("--cpp", help="cpp compiler path", default="g++")
     parser.add_argument(
         "--verbose", help="increase output verbosity", action="store_true"
     )
+    parser.add_argument("repo", help="flipper repository path")
 
     args = parser.parse_args()
 
@@ -218,11 +218,11 @@ if __name__ == "__main__":
 
     games = []
 
-    for file in os.listdir(args.path):
+    for file in os.listdir(args.repo):
         if not file.endswith(".toml"):
             continue
 
-        with open(os.path.join(args.path, file), "rb") as fp:
+        with open(os.repo.join(args.repo, file), "rb") as fp:
             games.append(Game(fp))
 
     for game in games:
@@ -235,7 +235,7 @@ if __name__ == "__main__":
     for game in games:
         game.es_config(gamelist)
 
-    with open(os.path.join(SYSTEM_PATH, "gamelist.xml"), "wb+") as fp:
+    with open(os.repo.join(SYSTEM_PATH, "gamelist.xml"), "wb+") as fp:
         tree = xml.ElementTree(gamelist)
         xml.indent(tree)
         tree.write(fp)
